@@ -7,6 +7,9 @@
 #define MCP_INT 7 // PE6
 #define MCP_CS 4  // PD4
 
+// VESC controller CAN Bus ID
+#define VESC_CAN_ID 1  // factory default is 0!
+
 // LEDS
 #define LED_RX 12
 #define LED_TX 8
@@ -20,6 +23,7 @@
 #define GAS_PIN 4
 #define GAS_FILTER_ALPHA 6 // right shift x bits = division by 2^x
 #define GAS_FILTER_NUM_READINGS 10
+// TODO: move to EEPROM
 #define GAS_ADC_LOWER 172
 #define GAS_ADC_UPPER 862
 
@@ -27,6 +31,7 @@
 #define EBRAKE_PIN 5
 #define EBRAKE_FILTER_ALPHA 6 // right shift x bits = division by 2^x
 #define EBRAKE_FILTER_NUM_READINGS 10
+// TODO: move to EEPROM
 #define EBRAKE_ADC_LOWER 165
 #define EBRAKE_ADC_UPPER 800
 
@@ -145,16 +150,17 @@ void loop() {
   // TODO: EBrake should be reverse after coming to a complete stop (and releasing the brake once)
   if (ebrake_percent == 0) { // no brake, gas OK
     if (SWITCH_R) {          // Drive forward
-      sndStat = comm_can_set_current_rel(1, gas_percent);
+      sndStat = comm_can_set_current_rel(VESC_CAN_ID, gas_percent);
       Serial.println("GAS FORWARD!");
     } else { // Drive ackwards
-      sndStat = comm_can_set_current_rel(1, -1 * gas_percent);
+      sndStat = comm_can_set_current_rel(VESC_CAN_ID, -1 * gas_percent);
       Serial.println("GAS BACKWARDS!");
     }
   } else {  //EBrake is active, disable gas
-    sndStat = comm_can_set_current_brake_rel(1, ebrake_percent);
+    sndStat = comm_can_set_current_brake_rel(VESC_CAN_ID, ebrake_percent);
     Serial.println("BRAKE!");
   }
+  
   if (sndStat == CAN_OK) {  //check if CAN transmission was received
     digitalWrite(LED_TX, HIGH);
     Serial.println("Message Sent Successfully!");
