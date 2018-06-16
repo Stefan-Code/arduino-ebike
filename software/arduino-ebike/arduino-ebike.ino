@@ -94,7 +94,6 @@ void setup() {
     Serial.println("MCP2515 Initialized Successfully!");
     led_flash_all(100, 3);
   }
-
   else {
     // halt
     while (1) {
@@ -127,9 +126,9 @@ void loop() {
   Serial.println(ebrake_filtered);
 
   // convert gas value range to 1/1000th of a percent
-  gas_percent = constrain(map(gas_filtered, GAS_ADC_LOWER, GAS_ADC_UPPER, 0, 100000), 0, 10000);
+  gas_percent = constrain(map(gas_filtered, GAS_ADC_LOWER, GAS_ADC_UPPER, 0, 100000), 0, 100000);
   // convert ebrake value range to 1/1000th of a percent
-  ebrake_percent = constrain(map(ebrake_filtered, EBRAKE_ADC_LOWER, EBRAKE_ADC_UPPER, 0, 100000), 0, 10000);
+  ebrake_percent = constrain(map(ebrake_filtered, EBRAKE_ADC_LOWER, EBRAKE_ADC_UPPER, 0, 100000), 0, 100000);
 
   // TODO: check ifdef DEBUG
   Serial.print("GAS PERCENT: ");
